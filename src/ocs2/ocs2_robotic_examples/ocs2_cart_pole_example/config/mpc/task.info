@@ -1,0 +1,138 @@
+; cartpole parameters
+CartPoleParameters
+{
+    cartMass     2.0
+    poleMass     0.2
+    poleLength   1.0
+    gravity      9.81
+}
+
+; Time Horizon
+mpcTimeHorizon
+{
+    timehorizon     2.0
+    numPartitions   2
+}
+
+; SLQ settings
+slq
+{
+    RiccatiIntegratorType        ODE45      ; ODE45, ADAMS_BASHFORTH, BULIRSCH_STOER, ADAMS_BASHFORTH_MOULTON
+    adams_integrator_dt          0.01
+
+    warmStartGSLQ                1
+    useLQForDerivatives          0
+    displayGradientDescent       0
+    tolGradientDescent           1e-2
+    acceptableTolGradientDescent 1e-2
+    maxIterationGradientDescent  5
+    minLearningRateNLP           0.05
+    maxLearningRateNLP           0.6
+    useAscendingLineSearchNLP    1
+
+    ddp
+    {
+        maxNumIterations             10     ; 50
+        minLearningRate              1.0    ; 0.1
+        maxLearningRate              1.0
+        minRelCost                   0.1    ; 0.01
+        stateConstraintPenaltyCoeff  100.0
+        stateConstraintPenaltyBase   1.1
+        meritFunctionRho             50.0
+        constraintStepSize           1.0    ; 1.0
+        displayInfo                  1
+        displayShortSummary          0
+
+
+        AbsTolODE                    1e-9
+        RelTolODE                    1e-6
+        minTimeStep                  1e-3
+        maxNumStepsPerSecond         100000
+        simulationIsConstrained      0
+        noStateConstraints           1
+        useMakePSD                   1
+        minAbsConstraint1ISE         5e-3
+        minRelConstraint1ISE         5e-6
+        checkNumericalStability      0
+
+        nThreads                     1
+
+        useFeedbackPolicy            0
+        useRiccatiSolver             1
+
+        minEventTimeDifference       0.01
+    }
+
+    rollout
+    {
+        AbsTolODE                    1e-9
+        RelTolODE                    1e-6
+        minTimeStep                  1e-3
+        maxNumStepsPerSecond         100000
+        checkNumericalStability      1
+    }
+}
+
+; MPC settings
+mpc
+{
+    runtimeMaxNumIterations     1
+    initMaxNumIterations        50
+    runtimeMaxLearningRate      1.0
+    runtimeMinLearningRate      1.0
+    initMinLearningRate         0.1
+    initMaxLearningRate         1.0
+    coldStart                   0
+    recedingHorizon             1     ; use receding horizon MPC
+    useParallelRiccatiSolver    0     ; use disjoint riccati solver in MP case and recedingHorizon fashion
+    solutionTimeWindow          -1    ; maximum [s]
+    mpcDesiredFrequency         100   ; [Hz]
+    mrtDesiredFrequency         400   ; [Hz]
+    debugPrint                  1
+}
+
+
+; initial state
+initialState
+{
+   (0,0) 3.14   ; theta
+   (1,0) 0.0    ; x
+   (2,0) 0.0    ; theta_dot
+   (3,0) 0.0    ; x_dot
+}
+
+; state weight matrix
+Q
+{
+   (0,0)  0.0   ; theta
+   (1,1)  0.0   ; x
+   (2,2)  0.0   ; theta_dot
+   (3,3)  0.0   ; x_dot
+}
+
+
+; control weight matrix
+R
+{
+   (0,0)  0.1
+}
+
+
+; final state weight matrix
+Q_final
+{
+   (0,0)  5.0  ; theta
+   (1,1)  1.0  ; x
+   (2,2)  1.0  ; theta_dot
+   (3,3)  1.0  ; x_dot
+}
+
+; final goal
+x_final
+{
+   (0,0)  0.0  ; theta
+   (1,0)  0.0  ; x
+   (2,0)  0.0  ; theta_dot
+   (3,0)  0.0  ; x_dot
+}
+
